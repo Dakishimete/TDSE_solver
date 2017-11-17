@@ -1,0 +1,284 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+%\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+%	figures and stuff
+\usepackage{graphicx, float}
+\usepackage{physics}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\pagestyle{fancy}
+
+%	SI units with plus/minus notation for uncertainty
+\usepackage[separate-uncertainty=true]{siunitx}
+%	declare torr unit
+\DeclareSIUnit\torr{Torr}
+\DeclareSIUnit\mT{\milli\tesla}
+
+%	use bold instead of arrow
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+%\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+%\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage[table,xcdraw]{xcolor} % For table colors
+\usepackage{lipsum}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{The Schrodinger Equation} % Article title
+\author{%
+\textsc{Alex Jose}\\[1ex] % Your name
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+\textsc{}\\[1ex] % Second author's name
+\small{University of North Carolina at Chapel Hill}	% Affiliations
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+}
+
+%----------------------------------------------------------------------------------------
+
+\usepackage{graphicx}
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+
+
+%------------------------------------------------
+\section{Schrodinger Equation} \label{sec:theory}
+\subsection{Time Dependent Schrodinger Equation}
+For a general quantum state vector $\ket{\psi}$, the probability of measuring an eigenstate $a_n$ is \cite{q2}:
+\begin{equation}
+	\mathcal{P}_{a_n} = |\bra{a_n}\ket{\psi}|^2
+\end{equation}
+$a_n$ is an eigenvector of  a  linear operator cooresponding to the observable. Although all measurements must be eigenvalues of a linear operator, some eigenvalues are not discritized. 
+The projection of a state $\ket{\psi}$ on a continous spectrum of position eigenstates is its wavefunction:
+\begin{equation}
+	\psi(x) = \bra{x}\ket{\psi}
+\end{equation}
+By equation (1), the probability density of measuring the position $x$ is
+\begin{equation}
+	p(x) = |\bra{x}\ket{\psi}|^2 = |\psi(x)|^2
+\end{equation}
+The probability of measuring between two positions (a,b) is
+\begin{equation}
+	P_{a<x<b} = \int_{a}^{b} \dd{x} \psi(x)^* \psi(x)
+\end{equation}
+This imposes a normalization condition for physical wavefuncitons
+\begin{equation}
+	\braket{\psi} = 1
+\end{equation}
+The Schrodinger equation describes the time and space evolution of the wave function of a quantum particle $\psi(x,t)$. 
+\begin{equation}
+	\begin{split}
+	i\hbar \pdv{\psi}{t} = - \frac{\hbar ^2}{2m} \laplacian{\psi} + V(\vb{r}) \psi\\
+	i\hbar \pdv{\Psi}{t} = \hat{\mathcal{H}}\Psi(\vb{r},t)
+\end{split}
+\end{equation}
+$V(\vb{r})$ is the position dependent potential. The total energy operator
+$\hat{\mathcal{H}}$ can be used to concisely write the PDE.
+The equation is a linear, second order partial differential equation. 
+The wavefunction can be used to compute the likelihood of measuring  observables, such as expected position, angular momentum and energy. Physical solutions to the Schrodinger equation must be normalizable and twice differentiable. Once normalized, the probability density function remains normalized as time progresses.
+
+For this assignment, the time dependent Schrodinger equation will be solved numerically for a one dimensional particle with a time independent hamiltionian. 
+\begin{equation}
+	i\hbar \pdv{\psi}{t} = -\frac{\hbar ^2}{2 m} \pdv[2]{\psi}{x} + V(x) \psi(x,t)
+\end{equation}
+\subsection{Time Independent Schrodinger Equation}
+In many cases, it is sufficient to study separable solutions to the Schrodinger equation
+\begin{equation}
+	\Psi(x,t) = \psi(x)\phi(t)
+\end{equation}
+Applying this solution to equation(7) yields two ordinary differential equations. The time independent Schrodinger equation 
+\begin{equation}
+	\hat{\mathcal{H}}\psi = E_n \psi
+\end{equation}
+and the time dependence
+\begin{equation}
+	\dv{\phi}{t} = - \frac{iE_n}{\hbar} \phi
+	\label{time}
+\end{equation}
+If the TISE yields discrete normalizable eigenfunctions and eigenenergies , the general solution is the sum of steady state solutions.
+\begin{equation}
+	\Psi(x,t) = \sum_n c_n\psi_n(x)e^{-iE_n t / \hbar}
+	\label{sum}
+\end{equation}
+	
+
+%------------------------------------------------
+\section{Free Particle}
+The TISE for a free particle is:
+\begin{equation}
+- \frac{\hbar^2}{2m} \dv[2]{\psi}{x} = E \psi
+\label{free}
+\end{equation}
+The solution to this ODE is
+\begin{equation}
+	\psi(x) = Ae^{ikx} + Be^{-ikx}
+\end{equation}
+where
+\begin{equation}
+	k^2 = \frac{2Em}{\hbar ^2}
+\end{equation}
+Because the particle is free, there are no boundary conditions to impose on the solution. The energy does not have a quantization condition; any eigenenergy can satisfy \eqref{free}.
+Multiplying $\psi(x)$ with time dependence from \eqref{time}:
+\begin{equation}
+	\begin{split}
+		\Psi(x,t) &= \psi(x) \phi(t) \\
+					       &= Ae^{ik(x - \frac{hk}{2m}t)} + Be^{-ik(x - \frac{hk}{2m}t)} \\
+	    &= Ae^{ik(x - \frac{hk}{2m}t)} \\
+k \in \mathbb{R}
+	\end{split}
+		\label{15}
+\end{equation}	
+It can be shown that \eqref{15} can not be normalized.\cite{q1}[p.60] This implies that there is no physical steady state solutions to the free particle equation. A free particle can not have well defined energy. Similar to \eqref{sum}, the sum of all solutions of the form above must be considered. Since k is a continuous parameter, an integral is used rather than a sum over discrete energies.
+\begin{equation}
+	\Psi(x,t) = \int_{-\infty}^{\infty} \dd{k} f(k) e^{ik(x - \frac{hk}{2m}t)}
+	\label{sol}
+\end{equation}
+ The "coefficients" $f(k)$ are determined by the initial state of the wave function.
+ \begin{equation}
+	 \Psi(x,0) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \dd{k} f(k) e^{ikx}
+ \end{equation}
+ 
+This condition can be resolved with Fourier analysis by recognizing that $\Psi(x,0)$ is the inverse Fourier transform of $f(k)$. (A multiplying factor is added to simplify the Fourier analysis).  It follows that $f(k)$ is the Fourier transform of the initial state.
+\begin{equation}
+	f(k) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty}
+	\dd{x} \Psi(x,0)e^{-ikx}
+\end{equation}
+This transform, along with integral \eqref{sol} results in a normalizable wavefunction. If the initial state is a superposition of discrete sinusoidal elements, summations can be used instead of integrals. In general free particles have wavefunctions that propagate as wave packets. These functions become delocalized as they modulate in an enveloping function. One common continuous state to consider is a Gaussian distribution.
+
+%------------------------------------------------
+\section{Finite Potential Well}
+A finite potential well is a well of length $a$ and depth $-V_o$. The analytic solution involves defining 3 functions for each region of the well. An energy quantization condition is found by imposing continuity on the functions and their derivatives. Unlike in the case of infinite square well, there are finite bound state energies.
+
+A Similar procedure is used for analyzing a finite potential barrier of height $V_o$ and width $a$. As a free particle encounters this barrier it is both transmitted and reflected, as in the classical case of a string. However, unlike the classical analogue, it is possible for the particle to transmit through the barrier even if its energy is less than the potential barrier. This phenomenon is known as quantum tunneling.
+
+The transmittance of the PDF for $ E < V_0$ particle \cite{q1}
+\begin{equation}
+	T = \frac{1}{1 + \frac{{V_0}^2\sinh^2(k a)}{4E(V_0 - E)}}
+\end{equation}
+where $k$ is a variable that also depends on energy. Although this result can be determined analytically, the energies of the bound states are roots of transcendental equations and must be solved numerically.
+
+\section{Numerical Methods}
+\subsection{Euler Methods}
+The TDSE can be solved numerically using iterative PDE solvers. Both spacial and temporal variables are discrete. The Hamiltonian can be adjusted into a finite difference form of a second derivative. Traditional Euler methods fail because the wave amplitude grows without bound (contrary to the diffusive nature of the expected solution). A simple implicit method fails to maintain the normalization of the wavefunction. Solutions to the Schrodinger equation should remain normalized as time progresses.
+
+The solution is to average the steps of the explicit and implicit euler methods.
+The unity preserving step for a free particle is \cite{q3}.
+\begin{equation}
+	\begin{split}
+	\Psi_{k}^{n+1} = \Psi_{k}^{n} + i\frac{Q}{2}(\Psi_{k+1}^{n+1}
+	 - 2\Psi_{k}^{n+1} + \Psi_{k-1}^{n+1}) \\
+	 + i\frac{Q}{2}(\Psi_{k+1}^{n}
+	 - 2\Psi_{k}^{n} + \Psi_{k-1}^{n})  
+ \end{split}
+\end{equation}
+$n$ is the time index and $k$ is the position index. $Q$ is a constant factor related to the step sizes. Finding $\Phi^{n+1}$ for all $k$ involves solving a tridiagonal system of equations, since only neighboring points are used to calculate the time evolution of a positional component. The same method can be adapted for a position dependent potential $V(x_k)$
+\subsection{Spectral Methods}
+There are sophisticated methods for solving the TDSE that make use of the time evolution operator:
+\begin{equation}
+\Phi(x,t + \Delta t) = e^{- i\hat{\mathcal{H}} \Delta {t} /\hbar}\Psi(x,t)
+\end{equation}
+The operator is a matrix exponential, therefore  it must be approximated. The Pade Approximat and Chebyhhev polynomial expansion are considered in the literature \cite{q4}. The Hamiltonian itself can be approximated with higher order Taylor expansions. "Pseudo spectral" methods use the Fast Fourier transform to compute the second order positional derivative.\cite{q5} Making use of the identity:
+\begin{equation}
+	\mathscr{F}[f'(t)] = - i \xi F(\xi)
+\end{equation}
+This method can be explicit and does not require solving a linear system.
+%------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{q1}
+  David J. Griffiths,
+  \textit{Introduction to Quantum Mechanics},
+  2nd edition,
+  2004.
+\bibitem{q2}
+David McIntyre, Janet Tate,
+\textit{Quantum Mechanics: A Paradigms Approach}
+1st edition,
+2012.
+\bibitem{q3}
+Macdonald,
+\textit{Direct Solution of Time Dependent Schrodinger Equation (TDSE)}
+\bibitem{q4}
+W. van Dijk, J. Brown, K. Spyksma
+\textit{Time-dependent approach to scattering by Chebyshev-polynomial expansion and the fast-Fourier-transform algorithm} 
+2011
+\bibitem{q5}
+D. Kosloff, R. Kosloff
+\textit{A Fourier Method Solution for the Time Dependent Schrodinger Equation as a Tool in Molecular Dynamics}
+Journal of Computational Physics 52 1983
+
+
+\end{thebibliography}
+
+\end{document}
