@@ -61,15 +61,17 @@ def init():
     return None
 
 
-def TDSE():
+def TDSE(J, N):
 
     fBNC = Bdirichlet
     fINC = gauss
     fPOT = free
     kappa = 1j
     # hbar/2m = 1
-    J = 500
-    N = 500
+    # hbar = 1
+    # m = 1/2
+    #J = 500
+    #N = 500
     minmaxx = np.array([-50, 50])
     minmaxt = np.array([0.0, 5.0])
     dx = (minmaxx[1]-minmaxx[0])/float(J-1)
@@ -84,7 +86,20 @@ def TDSE():
 
 
 def main():
-    x, t, q = TDSE()
+    parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
+    parser.add_argument("J", type=int,
+                        help="number of spatial support points\n"
+                             "try 500"
+                        )
+    parser.add_argument("N", type=int,
+                        help="number of time support points\n"
+                             "try 500"
+                        )
+
+    args = parser.parse_args()
+    J = args.J
+    N = args.N
+    x, t, q = TDSE(J, N)
     q = np.abs(q)
 
     #fig = plt.figure(num=1,figsize=(8,8),dpi=100,facecolor='white')
