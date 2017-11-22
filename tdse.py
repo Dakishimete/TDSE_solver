@@ -4,10 +4,13 @@ from argparse import RawTextHelpFormatter
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.cm as cm
 import plotutil
+
 
 def gauss(x):
     return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
+
 
 def Bdirichlet(q):
     q[0] = 0
@@ -15,17 +18,16 @@ def Bdirichlet(q):
     return q
 
 
-
 def free(x):
     return np.zeros((x.size+2), dtype=complex)
 
 
-def cranknicholson(x,t, alpha, fBNC, fINC, fPOT):
+def cranknicholson(x, t, alpha, fBNC, fINC, fPOT):
     J = x.size
     N = t.size
-    V = fPOT(x)
+    # V = fPOT(x)
     k = alpha/2
-    q = np.zeros((J+2,N), dtype=complex)
+    q = np.zeros((J+2, N), dtype=complex)
 
     b = np.zeros((J+2), dtype=complex)
     b[1:-1] = fINC(x)
@@ -40,21 +42,21 @@ def cranknicholson(x,t, alpha, fBNC, fINC, fPOT):
                 A[i, j] = -k
             elif i == j + 1:
                 A[i, j] = -k
-    A[0,0] = 1
+    A[0, 0] = 1
     A[-1, -1] = 1
 
     Ainv = np.linalg.inv(A)
     for n in range(N):
         q[:, n] = b
 
-        y = np.zeros((J+2),dtype=complex)
+        y = np.zeros((J+2), dtype=complex)
 
         for i in range(1, J+1):
             y[i] = k*(b[i-1] - 2*b[i] + b[i+1])
         y = b + y
         b = np.dot(Ainv, y)
 
-    return q[1:-1,:]
+    return q[1:-1, :]
 
 
 def init():
@@ -70,8 +72,6 @@ def TDSE(J, N):
     # hbar/2m = 1
     # hbar = 1
     # m = 1/2
-    #J = 500
-    #N = 500
     minmaxx = np.array([-50, 50])
     minmaxt = np.array([0.0, 5.0])
     dx = (minmaxx[1]-minmaxx[0])/float(J-1)
@@ -96,23 +96,35 @@ def main():
                              "try 500"
                         )
 
+    parser.add_argument("vis", type=str,
+                        help="visualization options\n"
+                             "2d, 3d, vid"
+                        )
+
     args = parser.parse_args()
     J = args.J
     N = args.N
+    vis = args.vis
+
     x, t, q = TDSE(J, N)
     q = np.abs(q)
 
-    #fig = plt.figure(num=1,figsize=(8,8),dpi=100,facecolor='white')
-    #ax = fig.add_subplot(111,projection='3d')
-    #t2d,x2d = np.meshgrid(t,x)
-    #ax.plot_surface(x2d,t2d,q)
-    plt.plot(x,q[:,0])
-    plt.plot(x,q[:,10])
-    plt.plot(x,q[:,50])
-    plt.plot(x,q[:,100])
-    plt.show()
-    
-    # uncomment to generate a video, takes time
-    #plotutil.timevol(x, q)
+    if vis == "3d":
+        fig = plt.figure(num=1, figsize=(8, 8), dpi=100, facecolor='white')
+        ax = fig.add_subplot(111, projection='3d')
+        t2d, x2d = np.meshgrid(t, x)
+        ax.plot_surface(x2d, t2d, q)
+        plt.show()
+
+    if vis == "2d":
+        plt.plot(x, q[:, 0])
+        plt.plot(x, q[:, 10])
+        plt.plot(x, q[:, 50])
+        plt.plot(x, q[:, 100])
+        plt.show()
+
+    if vis == "vid":
+        plotutil.timevol(x, q)
+
 
 main()
