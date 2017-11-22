@@ -111,5 +111,8 @@ def main():
     plt.plot(x,q[:,50])
     plt.plot(x,q[:,100])
     plt.show()
+    
+    # uncomment to generate a video, takes time
+    #plotutil.timevol(x, q)
 
 main()
