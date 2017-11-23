@@ -7,3 +7,6 @@ Optional Dependencies: ffmpeg
 
 Help:
 python TDSE.py -h 
+
+
+Check the unstable branch for more features/comments
