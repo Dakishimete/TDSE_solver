@@ -10,18 +10,18 @@ def timevol(x, q, N):
     def _update_plot(i, fig, phi):
         ax.clear()
         ax.set_xlim([-50,50])
-        ax.set_ylim([0,1])
-        scat = plt.scatter(x, q[:,i])
+        ax.set_ylim([-1,1])
+        scat = plt.plot(x, q[:,i])
         return scat
 
     fig = plt.figure()
 
     ax = fig.add_subplot(111)
     ax.set_xlim([-50,50])
-    ax.set_ylim([0,1])
-    scat = plt.scatter(x,q[:,0])
+    ax.set_ylim([-1,1])
+    scat = plt.plot(x,q[:,0])
 
     anim = animation.FuncAnimation(fig, _update_plot, fargs = (fig, scat),
                                    frames=N, interval =100)
 
-    anim.save('scatter.mp4', writer=writer)
+    anim.save('free.mp4', writer=writer)

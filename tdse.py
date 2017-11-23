@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 3j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
 
 
 def Bdirichlet(q):
@@ -20,7 +20,7 @@ def Bdirichlet(q):
 
 """
 =================================================
-POTENTIAL
+POTENTIALS
 -------------------------------------------------
 ____
 free as in freedom
@@ -118,7 +118,6 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
 def init():
     return None
 
-
 """
 =================================================
 TDSE()
@@ -142,7 +141,7 @@ def TDSE(J, N, problem):
     if problem == "free":
         fPOT = free
     if problem == "barrier":
-        fPOT = free
+        fPOT = barrier
     kappa = 1j
     # hbar/2m = 1
     # hbar = 1
@@ -177,10 +176,9 @@ def main():
                         )
 
     parser.add_argument("problem", type=str,
-                        help="Chose Potential\n"
+                        help="Choose Potential\n"
                              "free, barrier"
                         )
-
 
     args = parser.parse_args()
     J = args.J
@@ -189,7 +187,7 @@ def main():
     problem = args.problem
 
     x, t, q = TDSE(J, N, problem)
-    #q = np.abs(q)
+    q = np.abs(q)
 
     if vis == "3d":
         fig = plt.figure(num=1, figsize=(8, 8), dpi=100, facecolor='white')
@@ -199,7 +197,7 @@ def main():
         plt.show()
 
     if vis == "2d":
-        #plt.plot(x, barrier(x))
+        # plt.plot(x, barrier(x))
 
         plt.plot(x, q[:, 0])
         plt.plot(x, q[:, 10])
