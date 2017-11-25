@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-def timevol(x, q, N):
+def timevol(x, q, N, problem, fPOT):
 
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=30, bitrate=1800)
@@ -24,4 +24,6 @@ def timevol(x, q, N):
     anim = animation.FuncAnimation(fig, _update_plot, fargs = (fig, scat),
                                    frames=N, interval =100)
 
-    anim.save('free.mp4', writer=writer)
+    #anim.save('free.mp4', writer=writer)
+    #plt.plot(x, fPOT(x))
+    plt.show()

@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + .5j*x)
 
 
 def Bdirichlet(q):
@@ -41,8 +41,8 @@ def free(x):
 
 
 def barrier(x):
-    v = (np.piecewise(x, [x < 10, x > 10], [0.0, .75])
-         * np.piecewise(x, [x <= 12, x > 12], [.75, 0.0])
+    v = (np.piecewise(x, [x < 6, x > 6], [0.0, .75])
+         * np.piecewise(x, [x <= 6.5, x > 6.5], [.75, 0.0])
          )
     return v
 
@@ -105,7 +105,7 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
         y = np.zeros((J+2), dtype=complex)
         for i in range(1, J+1):
             # generate right side
-            y[i] = k*(b[i-1] - 2*b[i] + b[i+1]) - 1j*r*V[i]
+            y[i] = k*(b[i-1] - 2*b[i] + b[i+1]) - r*V[i]
         # add previous solution to the RHS vector
         y = b + y
         # calculate solution at next time step
@@ -114,9 +114,6 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
     # return w/o boundary conditions
     return q[1:-1, :]
 
-
-def init():
-    return None
 
 """
 =================================================
@@ -153,7 +150,6 @@ def TDSE(J, N, problem):
     x = minmaxx[0]+np.arange(J)*dx
     t = minmaxt[0]+np.arange(N)*dt
     alpha = (kappa * (dt))/(dx ** 2)
-
     q = cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT)
 
     return x, t, q
@@ -187,7 +183,8 @@ def main():
     problem = args.problem
 
     x, t, q = TDSE(J, N, problem)
-    q = np.abs(q)
+    # plot magnitude squared (probaiblity density function)
+    q = np.abs(q) ** 2
 
     if vis == "3d":
         fig = plt.figure(num=1, figsize=(8, 8), dpi=100, facecolor='white')
@@ -197,16 +194,17 @@ def main():
         plt.show()
 
     if vis == "2d":
-        # plt.plot(x, barrier(x))
-
+        if problem == "barrier":
+            plt.plot(x, barrier(x))
         plt.plot(x, q[:, 0])
-        plt.plot(x, q[:, 10])
-        plt.plot(x, q[:, 50])
-        plt.plot(x, q[:, 100])
+        plt.plot(x, q[:, int(N/10)])
+        plt.plot(x, q[:, int(N/5)])
+        plt.plot(x, q[:, int(N/2)])
+        plt.plot(x, q[:, int(N/1.5)])
         plt.show()
 
     if vis == "vid":
-        plotutil.timevol(x, q, N)
+        plotutil.timevol(x, q, N, problem, barrier)
 
 
 main()
