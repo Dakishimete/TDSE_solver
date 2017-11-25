@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
 
 
 def Bdirichlet(q):
