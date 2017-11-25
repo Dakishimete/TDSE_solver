@@ -120,8 +120,8 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
 TDSE()
 ______
 accepts:
-J    : position array
-N    : time array
+J    : position resolution
+N    : time resolution
 
 returns:
 x
