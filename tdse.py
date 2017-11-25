@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + .5j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
 
 
 def Bdirichlet(q):
@@ -87,7 +87,7 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
     for i in range(1, J+1):
         for j in range(0, J+2):
             if i == j:
-                A[i, j] = (2*k + 1) + 1j*r*V[i]
+                A[i, j] = (2*k + 1) + r*V[i]
             elif i == j - 1:
                 A[i, j] = -k
             elif i == j + 1:
