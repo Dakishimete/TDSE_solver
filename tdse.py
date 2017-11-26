@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
 
 
 def Bdirichlet(q):
@@ -41,8 +41,8 @@ def free(x):
 
 
 def barrier(x):
-    v = (np.piecewise(x, [x < 6, x > 6], [0.0, .75])
-         * np.piecewise(x, [x <= 6.5, x > 6.5], [.75, 0.0])
+    v = (np.piecewise(x, [x < 6, x > 6], [0.0, 1])
+         * np.piecewise(x, [x <= 7, x > 7], [1, 0.0])
          )
     return v
 
@@ -75,8 +75,8 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
     V = np.zeros((J+2), dtype=complex)
     V[1:-1] = fPOT(x)
     # This sets lowercase q in mcdonald report
-    k = alpha/2
-    r = (1j*dt)/2
+    k = alpha/2.0
+    r = (1j*dt)/2.0
     # initial values
     b = np.zeros((J+2), dtype=complex)
     b[1:-1] = fINC(x)
@@ -87,15 +87,15 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
     for i in range(1, J+1):
         for j in range(0, J+2):
             if i == j:
-                A[i, j] = (2*k + 1) + r*V[i]
-            elif i == j - 1:
+                A[i, j] = (2.0*k + 1) + r*V[i]
+            elif i == j - 1.0:
                 A[i, j] = -k
-            elif i == j + 1:
+            elif i == j + 1.0:
                 A[i, j] = -k
 
     # Boundary condition
-    A[0, 0] = 1
-    A[-1, -1] = 1
+    A[0, 0] = 1.0
+    A[-1, -1] = 1.0
     # Inverte Left Side, remains same for all iterations
     Ainv = np.linalg.inv(A)
     for n in range(N):
@@ -105,7 +105,7 @@ def cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT):
         y = np.zeros((J+2), dtype=complex)
         for i in range(1, J+1):
             # generate right side
-            y[i] = k*(b[i-1] - 2*b[i] + b[i+1]) - r*V[i]
+            y[i] = k*(b[i-1] - 2.0*b[i] + b[i+1]) - (r*V[i]*b[i])
         # add previous solution to the RHS vector
         y = b + y
         # calculate solution at next time step
@@ -139,20 +139,20 @@ def TDSE(J, N, problem):
         fPOT = free
     if problem == "barrier":
         fPOT = barrier
-    kappa = 1j
+    kappa = 1.0j
     # hbar/2m = 1
     # hbar = 1
     # m = 1/2
-    minmaxx = np.array([-50, 50])
-    minmaxt = np.array([0.0, 5.0])
+    minmaxx = np.array([-50.0, 50.0])
+    minmaxt = np.array([0.00, 5.00])
     dx = (minmaxx[1]-minmaxx[0])/float(J-1)
     dt = (minmaxt[1]-minmaxt[0])/float(N-1)
     x = minmaxx[0]+np.arange(J)*dx
     t = minmaxt[0]+np.arange(N)*dt
-    alpha = (kappa * (dt))/(dx ** 2)
+    alpha = (kappa * (dt))/(dx ** 2.0)
     q = cranknicholson(x, t, dx, dt, alpha, fBNC, fINC, fPOT)
 
-    return x, t, q
+    return x, t, q, dx
 
 
 def main():
@@ -182,9 +182,9 @@ def main():
     vis = args.vis
     problem = args.problem
 
-    x, t, q = TDSE(J, N, problem)
+    x, t, q, dx = TDSE(J, N, problem)
     # plot magnitude squared (probaiblity density function)
-    q = np.abs(q) ** 2
+    q = np.abs(q) ** (2.0)
 
     if vis == "3d":
         fig = plt.figure(num=1, figsize=(8, 8), dpi=100, facecolor='white')
@@ -195,12 +195,15 @@ def main():
 
     if vis == "2d":
         if problem == "barrier":
-            plt.plot(x, barrier(x))
+            plt.plot(x, barrier(x)/.5)
         plt.plot(x, q[:, 0])
         plt.plot(x, q[:, int(N/10)])
         plt.plot(x, q[:, int(N/5)])
         plt.plot(x, q[:, int(N/2)])
         plt.plot(x, q[:, int(N/1.5)])
+        plt.xlim(-15,15)
+        area = dx * np.sum(q[:,300])
+        print(area)
         plt.show()
 
     if vis == "vid":
