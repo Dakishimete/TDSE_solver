@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
 
 
 def Bdirichlet(q):
@@ -31,6 +31,8 @@ barrier
 _______
 accepts: positional array size(J)
 returns: local potential barrier array size(J+2)
+* Change height of peicewize function to simulate
+reflection/tunneling.
 =================================================
 
 """
@@ -46,6 +48,10 @@ def barrier(x):
          )
     return v
 
+def harmonic(x):
+    v = (x) ** 2
+    #v = (-(x) ** 2) + 10
+    return v
 
 """
 =================================================
@@ -139,6 +145,8 @@ def TDSE(J, N, problem):
         fPOT = free
     if problem == "barrier":
         fPOT = barrier
+    if problem == "harmonic":
+        fPOT = harmonic
     kappa = 1.0j
     # hbar/2m = 1
     # hbar = 1
@@ -173,7 +181,7 @@ def main():
 
     parser.add_argument("problem", type=str,
                         help="Choose Potential\n"
-                             "free, barrier"
+                             "free, barrier, harmonic"
                         )
 
     args = parser.parse_args()
@@ -195,19 +203,37 @@ def main():
 
     if vis == "2d":
         if problem == "barrier":
-            plt.plot(x, barrier(x)/.5)
+            plt.plot(x, barrier(x)/2, '--')
         plt.plot(x, q[:, 0])
         plt.plot(x, q[:, int(N/10)])
         plt.plot(x, q[:, int(N/5)])
         plt.plot(x, q[:, int(N/2)])
         plt.plot(x, q[:, int(N/1.5)])
-        plt.xlim(-15,15)
-        area = dx * np.sum(q[:,300])
-        print(area)
+        plt.xlabel('x')
+        plt.ylabel('Probability Density')
+        plt.xlim(-15, 15)
         plt.show()
 
     if vis == "vid":
         plotutil.timevol(x, q, N, problem, barrier)
 
+    # plot total area under curve as a function of time, Ideally preserves unity
+    area = np.zeros((N))
+    for j in range(N):
+        area[j] = dx * np.sum(q[:,j])
+    plt.plot(area)
+    plt.xlabel("t")
+    plt.ylabel("Total area under curve")
+    plt.grid()
+    plt.show()
+
+    # Plot decay of the wavefunction
+    decay = np.zeros((N))
+    for j in range(N):
+        decay[j] = np.max(q[:, j])
+    plt.plot(decay)
+    plt.xlabel('t')
+    plt.ylabel('Amplitude')
+    plt.show()
 
 main()
