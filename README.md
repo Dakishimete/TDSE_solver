@@ -1,12 +1,11 @@
 # TDSE_solver
 Numerical TDSE Solver
 
-Dependencies: matplotlib, numpy, python 3.6.3
 
-Optional Dependencies: ffmpeg
+Dependencies: Python 3.6, matplotlib/numpy
 
-Help:
-python TDSE.py -h 
+Optoinal Dependencies: ffmpeg for video encoding
 
+If you don't have ffmpeg, comment the anim.save line in plotutil.py and replace it with plt.show() to view video.
 
-Check the unstable branch for more features/comments
+Help: python tdse.py -h
