@@ -9,7 +9,7 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 1j*x)
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
 
 
 def Bdirichlet(q):
@@ -48,9 +48,9 @@ def barrier(x):
          )
     return v
 
+
 def harmonic(x):
     v = (x) ** 2
-    #v = (-(x) ** 2) + 10
     return v
 
 """
@@ -199,11 +199,15 @@ def main():
         ax = fig.add_subplot(111, projection='3d')
         t2d, x2d = np.meshgrid(t, x)
         ax.plot_surface(x2d, t2d, q, cmap=cm.rainbow)
+        ax.set_xlabel('Position')
+        ax.set_ylabel('Time')
+        ax.set_zlabel('Probability Density')
         plt.show()
 
     if vis == "2d":
         if problem == "barrier":
             plt.plot(x, barrier(x)/2, '--')
+            plt.ylim(0,1)
         plt.plot(x, q[:, 0])
         plt.plot(x, q[:, int(N/10)])
         plt.plot(x, q[:, int(N/5)])
@@ -211,16 +215,17 @@ def main():
         plt.plot(x, q[:, int(N/1.5)])
         plt.xlabel('x')
         plt.ylabel('Probability Density')
-        plt.xlim(-15, 15)
+        plt.xlim(-30, 30)
         plt.show()
 
     if vis == "vid":
         plotutil.timevol(x, q, N, problem, barrier)
 
-    # plot total area under curve as a function of time, Ideally preserves unity
+    # plot total area under curve as a function of time,
+    # Ideally preserves unity
     area = np.zeros((N))
     for j in range(N):
-        area[j] = dx * np.sum(q[:,j])
+        area[j] = dx * np.sum(q[:, j])
     plt.plot(area)
     plt.xlabel("t")
     plt.ylabel("Total area under curve")
@@ -235,5 +240,6 @@ def main():
     plt.xlabel('t')
     plt.ylabel('Amplitude')
     plt.show()
+
 
 main()
