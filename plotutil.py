@@ -4,9 +4,10 @@ import matplotlib.animation as animation
 
 
 def timevol(x, q, N, problem, fPOT):
-
-    Writer = animation.writers['ffmpeg']
-    writer = Writer(fps=30, bitrate=1800)
+    # ucnomment these two lines, as well as anim.save
+    # to encode and save the simulatation video
+    #Writer = animation.writers['ffmpeg']
+    #writer = Writer(fps=30, bitrate=1800)
 
     def _update_plot(i, fig, phi):
         ax.clear()
@@ -26,5 +27,4 @@ def timevol(x, q, N, problem, fPOT):
                                    frames=N, interval=N/10)
 
     # anim.save('free.mp4', writer=writer)
-    # plt.plot(x, fPOT(x))
     plt.show()

@@ -9,7 +9,9 @@ import plotutil
 
 
 def gauss(x):
-    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + 2j*x)
+    # change speed of gaussian
+    k = 2
+    return ((np.pi/2)**(-1/4))*np.exp(-(x**2) + k*1j*x)
 
 
 def Bdirichlet(q):
@@ -22,6 +24,7 @@ def Bdirichlet(q):
 =================================================
 POTENTIALS
 -------------------------------------------------
+free
 ____
 free as in freedom
 accepts: positional array size(J)
@@ -33,6 +36,13 @@ accepts: positional array size(J)
 returns: local potential barrier array size(J+2)
 * Change height of peicewize function to simulate
 reflection/tunneling.
+
+harmonic
+_______
+accepts: positional array size(J)
+returns: local harmonic potential centered about 
+x= 0
+array size(J+2)
 =================================================
 
 """
@@ -44,7 +54,7 @@ def free(x):
 
 def barrier(x):
     v = (np.piecewise(x, [x < 6, x > 6], [0.0, 1])
-         * np.piecewise(x, [x <= 7, x > 7], [1, 0.0])
+         * np.piecewise(x, [x <= 9, x > 9], [1, 0.0])
          )
     return v
 
@@ -53,6 +63,7 @@ def harmonic(x):
     v = (x) ** 2
     return v
 
+
 """
 =================================================
 cranknicholson
@@ -60,14 +71,13 @@ ______________
 accepts:
 x    : position array
 t    : time array
+dt   : time step
 alpha: -1j * dt/ (dx ** 2)
 fBNC : boundary condition function
 fINC : initial condition function
 fPOT : potential function
 
 returns:
-x
-t
 q    : solution array (J,N) matrix
 =================================================
 """
@@ -194,6 +204,25 @@ def main():
     # plot magnitude squared (probaiblity density function)
     q = np.abs(q) ** (2.0)
 
+    # plot area under the curve as a function of tim
+    area = np.zeros((N))
+    for j in range(N):
+        area[j] = dx * np.sum(q[:, j])
+    plt.plot(area)
+    plt.xlabel("t")
+    plt.ylabel("Total area under curve")
+    plt.grid()
+    plt.show()
+
+    # Plot decay of the wavefunction
+    decay = np.zeros((N))
+    for j in range(N):
+        decay[j] = np.max(q[:, j])
+    plt.plot(decay)
+    plt.xlabel('t')
+    plt.ylabel('Amplitude')
+    plt.show()
+
     if vis == "3d":
         fig = plt.figure(num=1, figsize=(8, 8), dpi=100, facecolor='white')
         ax = fig.add_subplot(111, projection='3d')
@@ -221,25 +250,6 @@ def main():
     if vis == "vid":
         plotutil.timevol(x, q, N, problem, barrier)
 
-    # plot total area under curve as a function of time,
-    # Ideally preserves unity
-    area = np.zeros((N))
-    for j in range(N):
-        area[j] = dx * np.sum(q[:, j])
-    plt.plot(area)
-    plt.xlabel("t")
-    plt.ylabel("Total area under curve")
-    plt.grid()
-    plt.show()
-
-    # Plot decay of the wavefunction
-    decay = np.zeros((N))
-    for j in range(N):
-        decay[j] = np.max(q[:, j])
-    plt.plot(decay)
-    plt.xlabel('t')
-    plt.ylabel('Amplitude')
-    plt.show()
 
 
 main()
