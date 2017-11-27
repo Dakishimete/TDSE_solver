@@ -1,0 +1,262 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+%\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+%	figures and stuff
+\usepackage{graphicx, float}
+\usepackage{physics}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\pagestyle{fancy}
+
+%	SI units with plus/minus notation for uncertainty
+\usepackage[separate-uncertainty=true]{siunitx}
+%	declare torr unit
+\DeclareSIUnit\torr{Torr}
+\DeclareSIUnit\mT{\milli\tesla}
+
+%	use bold instead of arrow
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\dx}{\Delta x}
+\newcommand{\dt}{\Delta t}
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+%\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+%\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage[table,xcdraw]{xcolor} % For table colors
+\usepackage{lipsum}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{Final Report:  Time Dependent Schr\"odinger Equation} % Article title
+\author{%
+\textsc{Alex Jose, Jeremy Low, Patrick Taylor}\\[1ex] % Your name
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+\textsc{}\\[1ex] % Second author's name
+\small{University of North Carolina at Chapel Hill}	% Affiliations
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+}
+
+%----------------------------------------------------------------------------------------
+
+\usepackage{graphicx}
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+\section{Numerical Implementation}
+\subsection{Euler Methods/Crank Nicholson}
+The TDSE can be solved numerically using iterative PDE solvers. Both spacial and temporal variables are discrete. The Hamiltonian can be adjusted into a finite difference form of a second derivative. Traditional Euler methods fail because the wave amplitude grows without bound (contrary to the diffusive nature of the expected solution). A simple implicit method fails to maintain the normalization of the wavefunction. Solutions to the Schrodinger equation should remain normalized as time progresses.
+
+The solution is to average the steps of the explicit and implicit euler methods.
+The unity preserving step for a free particle is \cite{q3}.
+\begin{equation}
+	\begin{split}
+	\Psi_{k}^{n+1} = \Psi_{k}^{n} + i\frac{Q}{2}(\Psi_{k+1}^{n+1}
+	 - 2\Psi_{k}^{n+1} + \Psi_{k-1}^{n+1}) \\
+	 + i\frac{Q}{2}(\Psi_{k+1}^{n}
+	 - 2\Psi_{k}^{n} + \Psi_{k-1}^{n})  
+ \end{split}
+\end{equation}
+$n$ is the time index and $k$ is the position index. $Q$ is a constant factor related to the step sizes.
+\begin{equation}
+	Q = \frac{\hbar \dt}{2 m {\dx}^2}
+\end{equation}
+Finding $\Phi^{n+1}$ for all $k$ involves solving a tridiagonal system of equations, since only neighboring points are used to calculate the time evolution of a positional component. The same method can be adapted for a position dependent potential.
+\begin{equation}
+	V(x_j) = V_{j}
+\end{equation}
+\subsection{Implementation}
+Including the potential term, the step for the Crank-Nicolson scheme is
+\begin{equation}
+	\begin{split}
+	\Psi_{k}^{n+1} = \\
+	\Psi_{k}^{n} + iq(\Psi_{k+1}^{n+1}
+	 - 2\Psi_{k}^{n+1} + \Psi_{k-1}^{n+1}) 
+	 - irV_j \Psi_{k}^{n+1}\\
+	 + iq(\Psi_{k+1}^{n}
+	 - 2\Psi_{k}^{n} + \Psi_{k-1}^{n})  
+	 - irV_j \Psi_{k}^{n}
+ \end{split}
+\end{equation}
+ The constants are defined as followed for the sake of simplflication.
+ \begin{equation}
+	 \begin{split}
+		 q = \frac{Q}{2} \\
+	r = \frac{dt}{2 \hbar}
+\end{split}
+ \end{equation}
+
+ This step can be represented as a tridiagonal linear system of the form:
+\begin{equation}
+	\vb{A}\vb{T}^{n+1} = \vb{b}
+\end{equation}
+\small
+\begin{gather*}
+		\vb{A} =     
+		\begin{pmatrix}
+1 &  &  &  & \\ 
+ -iq&1+2iq + riV_1&-iq&  & \\ 
+ &  -iq&1+2q + riV_2&-iq& \\ 
+ &  &-iq  &1+2iq+riV_3 &-iq \\ 
+ &  &  &  &1 \\
+ \end{pmatrix}
+ \\
+ \vb{b} = 
+ \begin{pmatrix}
+\Psi_0 = 0\\
+\Psi_{1}^{n}+iq(\Psi_{0}^{n}-2\Psi_{1}^{n}+\Psi_{2}^{n}) - (irV_1\Psi_{1}^{n})\\
+\Psi_{2}^{n}+iq(\Psi_{1}^{n}-2\Psi_{2}^{n}+\Psi_{3}^{n}) - (irV_2\Psi_{2}^{n})\ \\
+\vdots\\
+\Psi_{J-1} = 0
+\end{pmatrix}
+\end{gather*}
+\normalsize
+The corner entries of $\vb{A}$ establish the Dirichlet boundary condition. The probability density of the particle is set to 0 at the ends of the position domain.
+
+
+Using the Fourier Decomposition of the solution, stability analysis can be performed for the case that the step coefficients are real:
+\small
+	\begin{gather*}
+		\xi = 1 + q(\xi e^{ik\dx} - 2\xi + \xi e^{-ik\dx} + e^{ik\dx}
+	- 2 + e^{-ik\dx}) \\
+	1 + q(e^{ik\dx} - 2 + e^{-ik\dx})\\
+	 = \frac{1 - \frac{2\kappa \dt}{(\dx)^2}\sin^2(k\dx /2)}
+	{1 + \frac{2\kappa \dt}{(\dx)^2}\sin^2(k\dx /2)}
+\end{gather*}
+\normalsize
+The stability condition is:
+\begin{equation}
+	-1 < \frac{1 - b}{1 + b} < 1
+\end{equation}
+Which is unconditionally satisfied if $b > 0$. Therefore the Crank-Nicolson scheme is unconditionally stable. When b is imaginary, the amplification is exactly 1, which suggests that this method preserves the normalization of the wave function. 
+
+
+Reduced dimensionless units are used for the simulation. This simplifies most elements in the matrix inversion.
+\begin{equation}
+	\begin{split}
+		\hbar = 1 \\
+		m = 1/2 \\
+		\frac{\hbar}{2m} = 1
+	\end{split}
+\end{equation}
+
+The initial wave function used for the simulation is a normalized Gaussian wave-packet.
+\begin{equation}
+	\Psi(x,0) = \left(\frac{\pi}{2}\right)^{1/4} \exp(-x^2 + k_0 ix)
+\end{equation}
+$k_0$ is the center of the minimally uncertain constant momentum distribution, which allows the function to propagate to the right as it diffuses.
+\\
+\section{Results}
+\subsection{Free Particle}
+All simulations were run on a domain on a discretized spatial domain of $(-30,30)$. 5 seconds of the time evolution was modeled. The following charts represent the evolution of the free particle.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.50]{free2d}
+\caption{J=1000, N = 200, Free}
+\label{free2d}
+\end{figure}
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=.50]{free3d}
+\caption{3D Representation}
+\label{}
+\end{figure}
+As expected, the wave packet delocalizes, but it's peak moves to the right as a constant rate. The delocalization stems from the uncertainty in the particles momentum, and the advection is a product of the initially forward biassed velocity. As time progresses, the impact of the uncertain momentum results in a greater uncertainty in the position. The following chart plots the decay rate of the peak of the probability density function.
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.50]{freeDecay}
+\caption{Peak $\bra{\Psi}\ket{\Psi}$ of a Free Particle}
+\label{}
+\end{figure}
+We can verify that the numerical solver accurately represents a physical solution by confirming that the total probability remains normalized by integrating $\bra{\Psi}\ket{\Psi}$ over the entire domain. This integration was implemented with a Reimann sum.
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.50]{freeArea}
+\caption{Deviation of total area from 1 (J=1000)}
+\label{}
+\end{figure}
+As time evolves, the normalization is preserved. At the final time, the error is of the order of $10^{-12}$
+\subsection{Potential Barrier}
+Various types of quantum behaviour can by simulated through potential barriers. With a potential barrier of width "1" and height $V = 1$ can simulate quantum tunneling, the transmittance of a wavefunction through a barrier. It is also observed that a portion of the wavefunction is reflected upon interacting with the barrier.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{barrier2d}
+\caption{J=1000 N=200 barrier, k_0 = 2}
+\label{}
+\end{figure}
+If the wave has sufficient energy, it is not drastically impacted by the presence of a relatively low potential barrier.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{barrierFast}
+\caption{k_0 = 10}
+\label{}
+\end{figure}
+For an infinite potential barrier, the wavefunction does not enter the heigh potential region, instead it becomes incredibly localized as it pushes up against the barrier. It then interferes with itself, eventually recombining into a reflected wave.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.50]{barrierInf}
+\caption{Total Reflection on an Infinite Potential Barrier (The red curve is the interference)}
+\label{}
+\end{figure}
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.30]{barrierDecay}
+\caption{There is a spike in the wavefunction amplitude as it pushes against the barrier}
+\label{}
+\end{figure}
+\subsection{Quantum Harmonic Oscillator}
+\section{Improvements}
+
+
+%------------------------------------------------
+\end{document}
